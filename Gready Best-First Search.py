@@ -147,3 +147,73 @@ def visualize_graph(graph, edge_weights, path, pos):
     plt.axis('off')
     plt.tight_layout()
     plt.show()
+
+# Graph and heuristic data
+graph = {
+    'Bole': ['Arada', 'Lafto'],
+    'Arada': ['Bole', 'Yeka', 'Kirkos'],
+    'Lafto': ['Bole', 'Lideta', 'Kolfe'],
+    'Yeka': ['Arada', 'Kirkos', 'Gulele'],
+    'Kirkos': ['Arada', 'Yeka', 'Gulele', 'Jemo'],
+    'Lideta': ['Lafto', 'Jemo'],
+    'Kolfe': ['Lafto', 'Jemo'],
+    'Gulele': ['Yeka', 'Kirkos', 'Jemo', 'Akaky'],
+    'Jemo': ['Lideta', 'Kirkos', 'Kolfe', 'Gulele', 'Akaky'],
+    'Akaky': ['Gulele', 'Jemo']
+}
+
+edge_weights = {
+    ('Bole', 'Arada'): 6, ('Bole', 'Lafto'): 9,
+    ('Arada', 'Yeka'): 5, ('Arada', 'Kirkos'): 12,
+    ('Lafto', 'Lideta'): 7, ('Lafto', 'Kolfe'): 11,
+    ('Yeka', 'Kirkos'): 4, ('Yeka', 'Gulele'): 8,
+    ('Kirkos', 'Gulele'): 3, ('Kirkos', 'Jemo'): 10,
+    ('Lideta', 'Jemo'): 13, ('Kolfe', 'Jemo'): 2,
+    ('Gulele', 'Jemo'): 1, ('Gulele', 'Akaky'): 14,
+    ('Jemo', 'Akaky'): 15
+}
+
+heuristic = {
+    'Bole': 32, 'Arada': 26, 'Lafto': 24, 'Yeka': 21,
+    'Kirkos': 17, 'Lideta': 28, 'Kolfe': 17, 'Gulele': 14,
+    'Jemo': 15, 'Akaky': 0
+}
+
+# Coordinates for visualization
+pos = {
+    'Bole': (0.0, 4.0),
+    'Arada': (2.0, 4.5),
+    'Lafto': (1.2, 2.3),
+    'Yeka': (4.5, 4.5),
+    'Kirkos': (3.8, 2.7),
+    'Lideta': (2.8, 1.8),
+    'Kolfe': (2.4, 0.2),
+    'Gulele': (6.0, 2.6),
+    'Jemo': (5.0, 0.2),
+    'Akaky': (7.0, 0.2)
+}
+
+
+# Test the Greedy Best-First Search
+start_node = 'Bole'
+goal_node = 'Akaky'
+
+result_path, expansion_order = greedy_best_first_search(
+    graph,
+    start_node,
+    goal_node,
+    heuristic
+)
+
+print("\n=== Greedy Best-First Search ===")
+if result_path:
+    print("\nPath Found:")
+    print(" -> ".join(result_path))
+    
+    print("\nNode Expansion Order:")
+    print(" -> ".join(expansion_order))
+    
+    print("\nTotal Path Cost:")
+    print(calculate_path_cost(result_path, edge_weights))
+
+visualize_graph(graph, edge_weights, result_path, pos)
