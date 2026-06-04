@@ -1,3 +1,5 @@
+import heapq
+
 class PathFinder:
     def __init__(self):
         self.graph = {
@@ -15,10 +17,10 @@ class PathFinder:
 
         # Good heuristic toward Akaky
         self.heuristic = {
-            'Bole': 35,
-            'Arada': 29,
-            'Lafto': 28,
-            'Yeka': 25,
+            'Bole': 32,
+            'Arada': 26,
+            'Lafto': 24,
+            'Yeka': 21,
             'Kirkos': 17,
             'Lideta': 28,
             'Kolfe': 17,
@@ -48,3 +50,82 @@ class PathFinder:
             cost += self.get_cost(path[i], path[i + 1])
 
         return cost
+    
+    def a_star(self, start, goal):
+
+        open_list = []
+
+        g_score = {start: 0}
+
+        start_f = g_score[start] + self.heuristic[start]
+
+        heapq.heappush(open_list, (start_f, start))
+
+        parent = {start: None}
+
+        expansion_order = []
+        visited = set()
+
+        while open_list:
+            _, current = heapq.heappop(open_list)
+
+            if current in visited:
+                continue
+
+            visited.add(current)
+            expansion_order.append(current)
+
+            if current == goal:
+                path = []
+
+                while current is not None:
+                    path.append(current)
+                    current = parent[current]
+
+                path.reverse()
+
+                return path, expansion_order
+
+            for neighbor, cost in self.get_neighbors_with_cost(current).items():
+
+                tentative_g = g_score[current] + cost
+
+                if neighbor not in g_score or tentative_g < g_score[neighbor]:
+
+                    g_score[neighbor] = tentative_g
+
+                    h = self.heuristic[neighbor]
+
+                    f = tentative_g + h
+
+                    parent[neighbor] = current
+
+                    heapq.heappush(open_list, (f, neighbor))
+
+        return None, expansion_order
+    
+    
+if __name__ == "__main__":
+
+    pf = PathFinder()
+
+    start = "Bole"
+    goal = "Akaky"
+
+    path, expansion_order = pf.a_star(start, goal)
+
+    print("\n=== A* Search ===")
+
+    if path:
+
+        print("\nPath Found:")
+        print(" -> ".join(path))
+
+        print("\nNode Expansion Order:")
+        print(" -> ".join(expansion_order))
+
+        print("\nTotal Path Cost:")
+        print(pf.calculate_path_cost(path))
+
+    else:
+        print("No path found.")
